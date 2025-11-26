@@ -16,7 +16,7 @@ import os
 import io
 
 # CONFIGURAÇÕES 
-PORTA_SERIAL = "COM5"      # ajustar sempre que conectar o ECG 
+PORTA_SERIAL = "COM5"     
 BAUD_RATE = 9600
 DURACAO = 10               
 FS = 100                   
@@ -46,7 +46,7 @@ def ler_serial(porta, baud, duracao):
 
 # Filtragem do sinal
 def filtrar_sinal(sinal, fs):
-    b, a = signal.butter(4, [0.5/(fs/2), 40/(fs/2)], btype='band')
+    b, a = signal.butter(3, [0.5/(fs/2), 40/(fs/2)], btype='band')
     return signal.filtfilt(b, a, sinal)
 
 # Classificaçao do sinal
@@ -104,6 +104,7 @@ def extrair_features(signal_data, fs):
 
 #Execuçao do codigo
 def main():
+    nome_paciente = input("Digite o nome do paciente: ")
     resultados_classes = []
     resultados_bpm = []
     ecg_final = None
@@ -192,7 +193,6 @@ def main():
         bpm_final = mean(resultados_bpm)
 
         doc = fitz.open(r"C:\Users\guilh\Downloads\djao.pdf")
-        nome_paciente = input("Digite o nome do paciente: ")
         page = doc[0]
         ponto = fitz.Point(130, 268)  
         texto = nome_paciente
@@ -258,44 +258,17 @@ def main():
             color=(0, 0, 0)   # Cor em RGB 
         )
        
+        pasta_destino = r"C:\Users\guilh\Documents\RelatoriosECG"
 
-        # 🔹 Plotar gráfico apenas da última medição
-        if ecg_final is not None:
-            tempo = np.arange(len(ecg_final)) / FS
-            plt.figure(figsize=(10, 4))
-            plt.plot(tempo, ecg_final, label="ECG Filtrado", linewidth=1)
-            plt.scatter(rpeaks_final / FS, ecg_final[rpeaks_final], color='red', marker='o', label='Picos R')
-            plt.title(f"Sinal ECG (Última Medição) — BPM: {bpm_final_medido:.1f}")
-            plt.xlabel("Tempo (s)")
-            plt.ylabel("Amplitude (mV)")
-            plt.grid(True, linestyle='--', alpha=0.6)
-            plt.legend()
-            plt.tight_layout()
-            plt.show()
+        os.makedirs(pasta_destino, exist_ok=True)
 
-            img_buffer = io.BytesIO()
-            plt.savefig(img_buffer, format='png', bbox_inches='tight', dpi=150)
-            img_buffer.seek(0)
-            plt.close() 
-            rect_grafico = fitz.Rect(100, 200, 500, 400) 
+        caminho_saida = os.path.join(pasta_destino, "Relatorio_ECG.pdf")
 
-            page.insert_image(
-                rect_grafico,
-                stream=img_buffer 
-            )
-
-            print("Gráfico Matplotlib gerado em memória.")
-            pasta_destino = r"C:\Users\guilh\Documents\RelatoriosECG"
-
-            os.makedirs(pasta_destino, exist_ok=True)
-
-            caminho_saida = os.path.join(pasta_destino, "Relatorio_ECG.pdf")
-
-            doc.save(caminho_saida)
+        doc.save(caminho_saida)
             
-            doc.close()
+        doc.close()
 
-            print("Arquivo salvo em:", caminho_saida)
+        print("Arquivo salvo em:", caminho_saida)
 
 
     else:
