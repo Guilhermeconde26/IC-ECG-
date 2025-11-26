@@ -65,7 +65,7 @@ def ler_serial(porta, baud, duracao):
 
 # Filtragem do sinal
 def filtrar_sinal(sinal, fs):
-    b, a = signal.butter(4, [0.5/(fs/2), 40/(fs/2)], btype='band')
+    b, a = signal.butter(3, [0.5/(fs/2), 40/(fs/2)], btype='band')
     return signal.filtfilt(b, a, sinal)
 
 # Classificaçao do sinal
@@ -237,3 +237,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
