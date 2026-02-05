@@ -109,10 +109,9 @@ void detectarBPM(int signal, int sampleIndex) {
   static int prev = 0;
   static float mean = 2048;
 
-  // média lenta (baseline)
   mean = 0.99 * mean + 0.01 * signal;
 
-  float threshold = mean + 120;  // AJUSTÁVEL
+  float threshold = mean + 120;  
 
   bool pico =
     (signal > threshold) &&
