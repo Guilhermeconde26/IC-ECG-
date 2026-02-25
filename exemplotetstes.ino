@@ -1,5 +1,6 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
+#include <WiFiClientSecure.h>
 #include <ArduinoJson.h>
 #include <SPI.h>
 #include <Adafruit_GFX.h>
@@ -7,9 +8,9 @@
 #define runEveryus(t) for (static uint32_t _lasttime; (uint32_t)(micros() - _lasttime) >= (t); _lasttime += (t))
 
 // WIFI 
-const char* ssid = "AP101";
-const char* password = "26052006";
-const char* serverName = "http://192.168.2.108:8000/classify";
+const char* ssid = "Bazuquinha";
+const char* password = "voceconheceoneyma";
+const char* serverURL = "https://warner-inscriptional-deandrea.ngrok-free.dev/classify";
 bool wifiConectado = false;
 String ipLocal = "-";
 
@@ -119,8 +120,11 @@ void enviarParaServidor() {
 
   if (WiFi.status() != WL_CONNECTED) return;
 
+  WiFiClientSecure client;
+  client.setInsecure();  // ignora certificado SSL
+
   HTTPClient http;
-  http.begin(serverName);
+  http.begin(client, serverURL);
   http.addHeader("Content-Type", "application/json");
 
   DynamicJsonDocument doc(30000);
