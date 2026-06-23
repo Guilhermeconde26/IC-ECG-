@@ -8,7 +8,7 @@ from scipy.stats import skew, kurtosis
 import joblib
 import matplotlib.pyplot as plt
 import matplotlib
-matplotlib.use('Agg')  # Backend sem interface gráfica
+matplotlib.use('Agg')  # Backend sem interface gráfica pip install pyserial numpy pandas neurokit2 scipy joblib matplotlib reportlab pypdf PyMuPDF
 from statistics import mode, mean
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
